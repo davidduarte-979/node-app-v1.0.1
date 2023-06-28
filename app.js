@@ -1,6 +1,4 @@
 const path = require('path');
-const fs = require('fs');
-const https = require('https');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -14,16 +12,13 @@ const compression = require('compression');
 const morgan = require('morgan');
 const errorController = require('./controllers/error');
 const User = require('./models/user');
-const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.e7urz.mongodb.net/${process.env.MONGO_DATABASE}?retryWrites=true&w=majority`;
+const MONGODB_URI = process.env.MONGO_URI;
 const app = express();
 const store = new MongoDBStore({
     uri: MONGODB_URI,
     collection: 'sessions',
 });
 const csrfProtection = csrf();
-
-// const privateKey = fs.readFileSync('server.key');
-// const certificate = fs.readFileSync('server.cert');
 
 const fileStorage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -52,10 +47,6 @@ app.set('views', 'views');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
-const accessLogStream = fs.createWriteStream(
-    path.join(__dirname, 'access.log'),
-    { flags: 'a' },
-);
 app.use(helmet());
 app.use(compression());
 app.use(morgan('short'));
@@ -83,7 +74,6 @@ app.use((req, res, next) => {
 });
 
 app.use((req, res, next) => {
-    // throw new Error('Sync Dummy');
     if (!req.session.user) {
         return next();
     }
@@ -108,8 +98,7 @@ app.get('/500', errorController.get500);
 
 app.use(errorController.get404);
 
-app.use((error, req, res, next) => {
-    // res.redirect('/500');
+app.use((_error, req, res, _next) => {
     res.status(500).render('500', {
         pageTitle: 'Error!',
         path: '/500',
@@ -118,12 +107,6 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-    .connect(MONGODB_URI)
-    .then(result => {
-        // https
-        //   .createServer({ key: privateKey, cert: certificate }, app)
-        app.listen(process.env.PORT || 3000);
-    })
-    .catch(err => {
-        console.log(err);
-    });
+    .connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => app.listen(process.env.PORT || 3000))
+    .catch(err => console.log(err));
