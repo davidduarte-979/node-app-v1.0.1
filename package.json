@@ -8,9 +8,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "MONGO_USER=v25798979D MONGO_PASSWORD=SjNV2JvCEynwUCAQ MONGO_DATABASE=shop STRIPE_KEY=sk_test_51LAZ4UGAIcnjd9Ra1hzBvESh7E1JspIr0owyhkEexH3AR1QrY5BxeoKnNkv9PRsNrMgJnUsItcAcoQb65mRL8btq00JaLzMhDS node index.js",
     "start-server": "node index.js",
-    "start:dev": "nodemon index.js"
+    "start:dev": "nodemon index.js",
+    "lint": "eslint"
   },
   "author": "David Duarte",
   "license": "ISC",
