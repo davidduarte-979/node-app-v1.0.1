@@ -20,7 +20,7 @@ router.post(
     body('password', 'Password has to be valid.')
       .isLength({ min: 5 })
       .isAlphanumeric()
-      .trim()
+      .trim(),
   ],
   authController.postLogin
 );
@@ -31,12 +31,8 @@ router.post(
     check('email')
       .isEmail()
       .withMessage('Please enter a valid email.')
-      .custom((value, { req }) => {
-        // if (value === 'test@test.com') {
-        //   throw new Error('This email address if forbidden.');
-        // }
-        // return true;
-        return User.findOne({ email: value }).then(userDoc => {
+      .custom((value) => {
+        return User.findOne({ email: value }).then((userDoc) => {
           if (userDoc) {
             return Promise.reject(
               'E-Mail exists already, please pick a different one.'
@@ -59,7 +55,7 @@ router.post(
           throw new Error('Passwords have to match!');
         }
         return true;
-      })
+      }),
   ],
   authController.postSignup
 );
