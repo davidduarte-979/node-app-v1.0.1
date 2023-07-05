@@ -1,31 +1,26 @@
 const express = require('express');
-const ProductsService = require('../services/product.service');
+const OrdersService = require('../services/order.service');
 const validatorMiddleware = require('../middleware/validator.middleware');
 const {
-  getProductDto,
-  createProductDto,
-  updateProductDto,
-  queryProductDto,
-} = require('../dtos/product.dto');
+  getOrderDto,
+  createOrderDto,
+  updateOrderDto,
+  addItemDto,
+} = require('../dtos/order.dto');
 const router = express.Router();
-const service = new ProductsService();
+const service = new OrdersService();
 
-router.get(
-  '/',
-  validatorMiddleware(queryProductDto, 'query'),
-  async (req, res, next) => {
-    try {
-      const products = await service.find(req.query);
-      return res.status(200).json(products);
-    } catch (error) {
-      next(error);
-    }
+router.get('/', async (req, res, next) => {
+  try {
+    res.json(await service.find());
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 router.get(
   '/:id',
-  validatorMiddleware(getProductDto, 'params'),
+  validatorMiddleware(getOrderDto, 'params'),
   async (req, res, next) => {
     try {
       const { id } = req.params;
@@ -39,7 +34,7 @@ router.get(
 
 router.post(
   '/',
-  validatorMiddleware(createProductDto, 'body'),
+  validatorMiddleware(createOrderDto, 'body'),
   async (req, res, next) => {
     try {
       const body = req.body;
@@ -56,14 +51,14 @@ router.post(
 
 router.patch(
   '/:id',
-  validatorMiddleware(getProductDto, 'params'),
-  validatorMiddleware(updateProductDto, 'body'),
+  validatorMiddleware(getOrderDto, 'params'),
+  validatorMiddleware(updateOrderDto, 'body'),
   async (req, res, next) => {
     try {
       const body = req.body;
       const { id } = req.params;
-      const updatedProduct = await service.update(id, body);
-      return res.json(updatedProduct);
+      const updatedOrder = await service.update(id, body);
+      return res.json(updatedOrder);
     } catch (error) {
       next(error);
     }
@@ -72,14 +67,31 @@ router.patch(
 
 router.delete(
   '/:id',
-  validatorMiddleware(getProductDto, 'params'),
+  validatorMiddleware(getOrderDto, 'params'),
   async (req, res, next) => {
     try {
       const { id } = req.params;
-      const productId = await service.delete(id);
+      const orderId = await service.delete(id);
       return res.json({
         message: 'delete!!',
-        productId,
+        orderId,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.post(
+  '/add-item',
+  validatorMiddleware(addItemDto, 'body'),
+  async (req, res, next) => {
+    try {
+      const body = req.body;
+      const newItem = await service.addItem(body);
+      return res.status(201).json({
+        message: 'created!',
+        data: newItem,
       });
     } catch (error) {
       next(error);

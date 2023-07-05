@@ -1,36 +1,31 @@
 const express = require('express');
-const ProductsService = require('../services/product.service');
+const CategoryService = require('../services/category.service');
 const validatorMiddleware = require('../middleware/validator.middleware');
 const {
-  getProductDto,
-  createProductDto,
-  updateProductDto,
-  queryProductDto,
-} = require('../dtos/product.dto');
+  getCategoryDto,
+  createCategoryDto,
+  updateCategoryDto,
+} = require('../dtos/category.dto');
 const router = express.Router();
-const service = new ProductsService();
+const service = new CategoryService();
 
-router.get(
-  '/',
-  validatorMiddleware(queryProductDto, 'query'),
-  async (req, res, next) => {
-    try {
-      const products = await service.find(req.query);
-      return res.status(200).json(products);
-    } catch (error) {
-      next(error);
-    }
+router.get('/', async (req, res, next) => {
+  try {
+    const categories = await service.find();
+    return res.status(200).json(categories);
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 router.get(
   '/:id',
-  validatorMiddleware(getProductDto, 'params'),
+  validatorMiddleware(getCategoryDto, 'params'),
   async (req, res, next) => {
     try {
       const { id } = req.params;
-      const product = await service.findOne(id);
-      return res.status(200).json(product);
+      const category = await service.findOne(id);
+      return res.status(200).json(category);
     } catch (error) {
       next(error);
     }
@@ -39,14 +34,14 @@ router.get(
 
 router.post(
   '/',
-  validatorMiddleware(createProductDto, 'body'),
+  validatorMiddleware(createCategoryDto, 'body'),
   async (req, res, next) => {
     try {
       const body = req.body;
-      const newProduct = await service.create(body);
+      const newCategory = await service.create(body);
       return res.status(201).json({
         message: 'created!',
-        data: newProduct,
+        data: newCategory,
       });
     } catch (error) {
       next(error);
@@ -56,14 +51,14 @@ router.post(
 
 router.patch(
   '/:id',
-  validatorMiddleware(getProductDto, 'params'),
-  validatorMiddleware(updateProductDto, 'body'),
+  validatorMiddleware(getCategoryDto, 'params'),
+  validatorMiddleware(updateCategoryDto, 'body'),
   async (req, res, next) => {
     try {
       const body = req.body;
       const { id } = req.params;
-      const updatedProduct = await service.update(id, body);
-      return res.json(updatedProduct);
+      const updatedCategory = await service.update(id, body);
+      return res.json(updatedCategory);
     } catch (error) {
       next(error);
     }
@@ -72,7 +67,7 @@ router.patch(
 
 router.delete(
   '/:id',
-  validatorMiddleware(getProductDto, 'params'),
+  validatorMiddleware(getCategoryDto, 'params'),
   async (req, res, next) => {
     try {
       const { id } = req.params;
