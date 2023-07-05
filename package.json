@@ -13,8 +13,8 @@
     "lint": "eslint",
     "migrations:generate": "sequelize-cli migration:generate --name",
     "migrations:run": "sequelize-cli db:migrate",
-    "migrations:revert": "sequelize-cli db:undo",
-    "migrations:delete": "sequelize-cli db:undo:all"
+    "migrations:revert": "sequelize-cli db:migrate:undo",
+    "migrations:delete": "sequelize-cli db:migrate:undo:all"
   },
   "author": "David Duarte",
   "license": "ISC",
@@ -23,8 +23,7 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
     "nodemon": "^1.18.3",
-    "prettier": "^2.8.8",
-    "sequelize-cli": "^6.6.1"
+    "prettier": "^2.8.8"
   },
   "dependencies": {
     "@faker-js/faker": "^8.0.2",
@@ -56,6 +55,7 @@
     "pg-hstore": "^2.3.4",
     "pug": "^2.0.3",
     "sequelize": "^5.22.5",
-    "stripe": "^9.8.0"
+    "stripe": "^9.8.0",
+    "sequelize-cli": "^6.6.1"
   }
 }

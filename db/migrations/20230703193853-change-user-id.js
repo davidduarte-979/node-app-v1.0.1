@@ -13,5 +13,10 @@ module.exports = {
     });
   },
 
-  async down(queryInterface) {},
+  async down(queryInterface) {
+    await queryInterface.removeConstraint(
+      CUSTOMER_TABLE,
+      'customers_user_id_key'
+    );
+  },
 };
