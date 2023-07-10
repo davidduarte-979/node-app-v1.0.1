@@ -1,6 +1,8 @@
 const express = require('express');
+const passport = require('passport');
 const CategoryService = require('../services/category.service');
 const validatorMiddleware = require('../middleware/validator.middleware');
+const { checkRoles } = require('../middleware/auth.middleware');
 const {
   getCategoryDto,
   createCategoryDto,
@@ -34,6 +36,8 @@ router.get(
 
 router.post(
   '/',
+  passport.authenticate('jwt', { session: false }),
+  checkRoles('admin', 'seller'),
   validatorMiddleware(createCategoryDto, 'body'),
   async (req, res, next) => {
     try {

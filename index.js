@@ -13,6 +13,7 @@ const routerApi = require('./routes');
 const getMongoDbConnection = require('./libs/mongoose');
 
 // auth and session middlerwares
+require('./util/auth');
 sessionMiddleware(app);
 csrfMiddleware(app);
 authUserMiddleware(app);

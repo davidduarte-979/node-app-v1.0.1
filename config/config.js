@@ -9,6 +9,9 @@ const config = {
   dbName: process.env.DB_NAME,
   dbPort: process.env.DB_PORT,
   mongoDbUri: process.env.MONGO_URI,
+  jwtSecretToken: process.env.JWT_SECRET_TOKEN,
+  emailUser: process.env.EMAIL_USER,
+  emailPassword: process.env.EMAIL_PASSWORD,
 };
 
 module.exports = config;
