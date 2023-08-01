@@ -1,14 +1,14 @@
-const express = require('express');
-const { check, body } = require('express-validator/check');
+import { Router } from 'express';
+import { check, body } from 'express-validator/check/index.js';
 
-const authController = require('../controllers/auth');
-const User = require('../models/user');
+import { getLogin, getSignup, postLogin, postSignup, postLogout, getReset, postReset, getNewPassword, postNewPassword } from '../controllers/auth.js';
+import userModel from '../models/user.js';
 
-const router = express.Router();
+const router = Router();
 
-router.get('/login', authController.getLogin);
+router.get('/login', getLogin);
 
-router.get('/signup', authController.getSignup);
+router.get('/signup', getSignup);
 
 router.post(
   '/login',
@@ -22,7 +22,7 @@ router.post(
       .isAlphanumeric()
       .trim(),
   ],
-  authController.postLogin
+  postLogin
 );
 
 router.post(
@@ -32,7 +32,7 @@ router.post(
       .isEmail()
       .withMessage('Please enter a valid email.')
       .custom((value) => {
-        return User.findOne({ email: value }).then((userDoc) => {
+        return userModel.findOne({ email: value }).then((userDoc) => {
           if (userDoc) {
             return Promise.reject(
               'E-Mail exists already, please pick a different one.'
@@ -57,17 +57,17 @@ router.post(
         return true;
       }),
   ],
-  authController.postSignup
+  postSignup
 );
 
-router.post('/logout', authController.postLogout);
+router.post('/logout', postLogout);
 
-router.get('/reset', authController.getReset);
+router.get('/reset', getReset);
 
-router.post('/reset', authController.postReset);
+router.post('/reset', postReset);
 
-router.get('/reset/:token', authController.getNewPassword);
+router.get('/reset/:token', getNewPassword);
 
-router.post('/new-password', authController.postNewPassword);
+router.post('/new-password', postNewPassword);
 
-module.exports = router;
+export default router;

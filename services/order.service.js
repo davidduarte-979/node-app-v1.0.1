@@ -1,5 +1,6 @@
-const boom = require('@hapi/boom');
-const { models } = require('../libs/sequelize');
+import { notFound } from '@hapi/boom';
+import sequilizeLib from '../libs/sequelize.js';
+const { models } = sequilizeLib;
 
 class OrdersService {
   constructor() {}
@@ -25,7 +26,7 @@ class OrdersService {
       ],
     });
     if (!order) {
-      throw boom.notFound('Order not found');
+      throw notFound('Order not found');
     }
     return order;
   }
@@ -48,4 +49,4 @@ class OrdersService {
   }
 }
 
-module.exports = OrdersService;
+export default OrdersService;

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Complete Node.js Guide",
   "main": "index.js",
+  "type": "module",
   "engines": {
     "node": "14.17.1"
   },

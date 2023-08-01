@@ -1,5 +1,7 @@
-const { Model, DataTypes, Sequelize } = require('sequelize');
-const { CUSTOMER_TABLE } = require('./customer.model');
+import sequelize from 'sequelize';
+const { Model, DataTypes, Sequelize } = sequelize;
+
+import { CUSTOMER_TABLE } from './customer.model.js';
 const ORDER_TABLE = 'orders';
 
 const OrderSchema = {
@@ -62,4 +64,4 @@ class Order extends Model {
   }
 }
 
-module.exports = { Order, OrderSchema, ORDER_TABLE };
+export { Order, OrderSchema, ORDER_TABLE };

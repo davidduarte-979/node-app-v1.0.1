@@ -1,5 +1,5 @@
-const { ValidationError } = require('sequelize');
-
+import sequelize from 'sequelize';
+const { ValidationError } = sequelize;
 const logErrors = (err, rep, res, next) => {
   console.error(err);
   next(err);
@@ -40,4 +40,4 @@ const errorMiddleware = (app) => {
   app.use(errorHandler);
 };
 
-module.exports = errorMiddleware;
+export default errorMiddleware;

@@ -1,5 +1,5 @@
-const { Strategy } = require('passport-local');
-const AuthService = require('../../../services/auth.service');
+import { Strategy } from 'passport-local';
+import AuthService from '../../../services/auth.service.js';
 
 const options = {
   usernameField: 'email',
@@ -15,4 +15,4 @@ const LocalStrategy = new Strategy(options, async (email, password, done) => {
   }
 });
 
-module.exports = LocalStrategy;
+export default LocalStrategy;

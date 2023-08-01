@@ -1,15 +1,17 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const compression = require('compression');
-const morgan = require('morgan');
+import { json } from 'express';
+import bodyParse from 'body-parser';
+import compression from 'compression';
+import morgan from 'morgan';
+
+const { urlencoded } = bodyParse;
 
 const staticMiddleware = (app) => {
   app.set('view engine', 'ejs');
   app.set('views', 'views');
-  app.use(bodyParser.urlencoded({ extended: false }));
+  app.use(urlencoded({ extended: false }));
   app.use(morgan('short'));
-  app.use(express.json());
+  app.use(json());
   app.use(compression());
 };
 
-module.exports = staticMiddleware;
+export default staticMiddleware;

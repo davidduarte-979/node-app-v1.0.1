@@ -1,6 +1,8 @@
 {
   "parserOptions": {
-    "ecmaVersion": 2018
+    "ecmaVersion": 2018,
+    "sourceType": "module",
+    "allowImportExportEverywhere": true
   },
   "extends": [
     "eslint:recommended",
@@ -13,5 +15,6 @@
   },
   "rules": {
     "no-console": "warn"
-  }
+  },
+  "parser": "babel-eslint"
 }

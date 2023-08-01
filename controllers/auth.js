@@ -1,13 +1,14 @@
-const crypto = require('crypto');
+import { randomBytes } from 'crypto';
 
-const bcrypt = require('bcryptjs');
-const nodemailer = require('nodemailer');
-const sendgridTransport = require('nodemailer-sendgrid-transport');
-const { validationResult } = require('express-validator/check');
+import bcrypt from 'bcryptjs';
+import { createTransport } from 'nodemailer';
+import sendgridTransport from 'nodemailer-sendgrid-transport';
+import expressValidator from 'express-validator/check/index.js';
+import User from '../models/user.js';
 
-const User = require('../models/user');
+const { validationResult } = expressValidator;
 
-const transporter = nodemailer.createTransport(
+const transporter = createTransport(
   sendgridTransport({
     auth: {
       api_key:
@@ -16,7 +17,7 @@ const transporter = nodemailer.createTransport(
   })
 );
 
-exports.getLogin = (req, res) => {
+export function getLogin(req, res) {
   let message = req.flash('error');
   if (message.length > 0) {
     message = message[0];
@@ -33,9 +34,9 @@ exports.getLogin = (req, res) => {
     },
     validationErrors: [],
   });
-};
+}
 
-exports.getSignup = (req, res) => {
+export function getSignup(req, res) {
   let message = req.flash('error');
   if (message.length > 0) {
     message = message[0];
@@ -53,9 +54,9 @@ exports.getSignup = (req, res) => {
     },
     validationErrors: [],
   });
-};
+}
 
-exports.postLogin = (req, res, next) => {
+export function postLogin(req, res, next) {
   const email = req.body.email;
   const password = req.body.password;
 
@@ -87,8 +88,7 @@ exports.postLogin = (req, res, next) => {
           validationErrors: [],
         });
       }
-      bcrypt
-        .compare(password, user.password)
+      bcrypt.compare(password, user.password)
         .then((doMatch) => {
           if (doMatch) {
             req.session.isLoggedIn = true;
@@ -119,9 +119,9 @@ exports.postLogin = (req, res, next) => {
       error.httpStatusCode = 500;
       return next(error);
     });
-};
+}
 
-exports.postSignup = (req, res, next) => {
+export function postSignup(req, res, next) {
   const email = req.body.email;
   const password = req.body.password;
 
@@ -140,8 +140,7 @@ exports.postSignup = (req, res, next) => {
     });
   }
 
-  bcrypt
-    .hash(password, 12)
+  bcrypt.hash(password, 12)
     .then((hashedPassword) => {
       const user = new User({
         email: email,
@@ -158,16 +157,16 @@ exports.postSignup = (req, res, next) => {
       error.httpStatusCode = 500;
       return next(error);
     });
-};
+}
 
-exports.postLogout = (req, res) => {
+export function postLogout(req, res) {
   req.session.destroy((err) => {
     console.log(err);
     res.redirect('/');
   });
-};
+}
 
-exports.getReset = (req, res) => {
+export function getReset(req, res) {
   let message = req.flash('error');
   if (message.length > 0) {
     message = message[0];
@@ -179,10 +178,10 @@ exports.getReset = (req, res) => {
     pageTitle: 'Reset Password',
     errorMessage: message,
   });
-};
+}
 
-exports.postReset = (req, res, next) => {
-  crypto.randomBytes(32, (err, buffer) => {
+export function postReset(req, res, next) {
+  randomBytes(32, (err, buffer) => {
     if (err) {
       return res.redirect('/reset');
     }
@@ -215,9 +214,9 @@ exports.postReset = (req, res, next) => {
         return next(error);
       });
   });
-};
+}
 
-exports.getNewPassword = (req, res, next) => {
+export function getNewPassword(req, res, next) {
   const token = req.params.token;
   User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } })
     .then((user) => {
@@ -240,9 +239,9 @@ exports.getNewPassword = (req, res, next) => {
       error.httpStatusCode = 500;
       return next(error);
     });
-};
+}
 
-exports.postNewPassword = (req, res, next) => {
+export function postNewPassword(req, res, next) {
   const newPassword = req.body.password;
   const userId = req.body.userId;
   const passwordToken = req.body.passwordToken;
@@ -271,4 +270,4 @@ exports.postNewPassword = (req, res, next) => {
       error.httpStatusCode = 500;
       return next(error);
     });
-};
+}

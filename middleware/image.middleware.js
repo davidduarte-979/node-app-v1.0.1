@@ -1,9 +1,12 @@
-const multer = require('multer');
-const express = require('express');
-const path = require('path');
+import multer, { diskStorage } from 'multer';
+import { static as staticExpress } from 'express';
+import { fileURLToPath } from 'url';
+import { join, dirname } from 'path';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const imageMiddleware = (app) => {
-  const storage = multer.diskStorage({
+  const storage = diskStorage({
     destination: (req, file, cb) => {
       cb(null, 'images');
     },
@@ -24,8 +27,8 @@ const imageMiddleware = (app) => {
     }
   };
   app.use(multer({ storage, fileFilter }).single('image'));
-  app.use(express.static(path.join(__dirname, '..', 'public')));
-  app.use('/images', express.static(path.join(__dirname, '..', 'images')));
+  app.use(staticExpress(join(__dirname, '..', 'public')));
+  app.use('/images', staticExpress(join(__dirname, '..', 'images')));
 };
 
-module.exports = imageMiddleware;
+export default imageMiddleware;

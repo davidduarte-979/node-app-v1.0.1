@@ -1,11 +1,11 @@
-const boom = require('@hapi/boom');
+import { forbidden } from '@hapi/boom';
 
 const checkAdminRole = (req, res, next) => {
   const user = req.user;
   if (user.role === 'admin') {
     next();
   } else {
-    next(boom.forbidden('required admin role'));
+    next(forbidden('required admin role'));
   }
 };
 
@@ -15,9 +15,9 @@ const checkRoles = (...roles) => {
     if (roles.includes(user.role)) {
       next();
     } else {
-      next(boom.forbidden());
+      next(forbidden());
     }
   };
 };
 
-module.exports = { checkAdminRole, checkRoles };
+export { checkAdminRole, checkRoles };

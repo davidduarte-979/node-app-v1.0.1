@@ -1,8 +1,8 @@
-const express = require('express');
-const passport = require('passport');
-const AuthService = require('../services/auth.service');
+import { Router } from 'express';
+import passport from 'passport';
+import AuthService from '../services/auth.service.js';
 
-const router = express.Router();
+const router = Router();
 
 const service = new AuthService();
 
@@ -39,4 +39,4 @@ router.post('/reset-password', async (req, res, next) => {
   }
 });
 
-module.exports = router;
+export default router;

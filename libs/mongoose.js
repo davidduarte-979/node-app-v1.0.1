@@ -1,5 +1,5 @@
-const config = require('../config/config');
-const mongoose = require('mongoose');
+import config from '../config/config.js';
+import mongoose from 'mongoose';
 
 const getMongoDbConnection = () =>
   mongoose.connect(config.mongoDbUri, {
@@ -7,4 +7,4 @@ const getMongoDbConnection = () =>
     useUnifiedTopology: true,
   });
 
-module.exports = getMongoDbConnection;
+export default getMongoDbConnection;

@@ -1,7 +1,8 @@
-const bcrypt = require('bcryptjs');
-const boom = require('@hapi/boom');
+import bcrypt from 'bcryptjs';
+import { notFound } from '@hapi/boom';
 
-const { models } = require('../libs/sequelize');
+import sequelizeLib from '../libs/sequelize.js';
+const { models } = sequelizeLib;
 
 class UserService {
   constructor() {}
@@ -33,7 +34,7 @@ class UserService {
   async findOne(id) {
     const user = await models.User.findByPk(id);
     if (!user) {
-      throw boom.notFound('user not found');
+      throw notFound('user not found');
     }
     return user;
   }
@@ -51,4 +52,4 @@ class UserService {
   }
 }
 
-module.exports = UserService;
+export default UserService;

@@ -1,5 +1,7 @@
-const boom = require('@hapi/boom');
-const { models } = require('../libs/sequelize');
+import { notFound } from '@hapi/boom';
+import sequilizeLib from '../libs/sequelize.js';
+
+const { models } = sequilizeLib;
 class CategoryService {
   constructor() {}
 
@@ -18,7 +20,7 @@ class CategoryService {
       include: ['products'],
     });
     if (!category) {
-      throw boom.notFound('Category not found');
+      throw notFound('Category not found');
     }
     return category;
   }
@@ -35,4 +37,4 @@ class CategoryService {
   }
 }
 
-module.exports = CategoryService;
+export default CategoryService;

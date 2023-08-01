@@ -1,19 +1,19 @@
-const express = require('express');
+import express from 'express';
 const app = express();
-const config = require('./config/config');
+import config from './config/config.js';
 
-const imageMiddleware = require('./middleware/image.middleware');
-const staticMiddleware = require('./middleware/static.middleware');
-const csrfMiddleware = require('./middleware/csrf.middleware');
-const sessionMiddleware = require('./middleware/session.middleware');
-const authUserMiddleware = require('./middleware/auth-user.middleware');
-const errorMiddleware = require('./middleware/error.middleware');
+import imageMiddleware from './middleware/image.middleware.js';
+import staticMiddleware from './middleware/static.middleware.js';
+import csrfMiddleware from './middleware/csrf.middleware.js';
+import sessionMiddleware from './middleware/session.middleware.js';
+import authUserMiddleware from './middleware/auth-user.middleware.js';
+import errorMiddleware from './middleware/error.middleware.js';
 
-const routerApi = require('./routes');
-const getMongoDbConnection = require('./libs/mongoose');
+import routerApi from './routes/index.js';
+import getMongoDbConnection from './libs/mongoose.js';
 
 // auth and session middlerwares
-require('./util/auth');
+import './util/auth/index.js';
 sessionMiddleware(app);
 csrfMiddleware(app);
 authUserMiddleware(app);

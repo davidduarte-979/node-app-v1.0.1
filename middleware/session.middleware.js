@@ -1,7 +1,8 @@
-const helmet = require('helmet');
-const cors = require('cors');
-const session = require('express-session');
-const MongoDBStore = require('connect-mongodb-session')(session);
+import helmet from 'helmet';
+import cors from 'cors';
+import session from 'express-session';
+import connectMongodbSession from 'connect-mongodb-session';
+const MongoDBStore = connectMongodbSession(session);
 const MONGODB_URI = process.env.MONGO_URI;
 const store = new MongoDBStore({
   uri: MONGODB_URI,
@@ -21,4 +22,4 @@ const sessionMiddleware = (app) => {
   );
 };
 
-module.exports = sessionMiddleware;
+export default sessionMiddleware;

@@ -1,17 +1,17 @@
-const express = require('express');
-const productsRouter = require('./products.router');
-const customersRouter = require('./customer.router');
-const categoriesRouter = require('./categories.router');
-const authRouter = require('./auth.router');
-const ordersRouter = require('./orders.router');
-const usersRouter = require('./users.router');
-const adminRoutes = require('./admin');
-const shopRoutes = require('./shop');
-const authRoutes = require('./auth');
-const errorController = require('../controllers/error');
+import { Router } from 'express';
+import productsRouter from './products.router.js';
+import customersRouter from './customer.router.js';
+import categoriesRouter from './categories.router.js';
+import authRouter from './auth.router.js';
+import ordersRouter from './orders.router.js';
+import usersRouter from './users.router.js';
+import adminRoutes from './admin.js';
+import shopRoutes from './shop.js';
+import authRoutes from './auth.js';
+import { get500, get404 } from '../controllers/error.js';
 
 const routerApi = (app) => {
-  const router = express.Router();
+  const router = Router();
   app.use('/api/v1', router);
   router.use('/products', productsRouter);
   router.use('/users', usersRouter);
@@ -24,8 +24,8 @@ const routerApi = (app) => {
   app.use(shopRoutes);
   app.use(authRoutes);
 
-  app.get('/500', errorController.get500);
-  app.use(errorController.get404);
+  app.get('/500', get500);
+  app.use(get404);
 };
 
-module.exports = routerApi;
+export default routerApi;

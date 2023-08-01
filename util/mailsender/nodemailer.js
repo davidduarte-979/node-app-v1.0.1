@@ -1,8 +1,9 @@
-const nodemailer = require('nodemailer');
-const { emailPassword, emailUser } = require('../../config/config');
+import { createTransport } from 'nodemailer';
+import config from '../../config/config.js';
 
+const { emailPassword, emailUser } = config;
 const sendMail = async (mailInfo) => {
-  let transporter = nodemailer.createTransport({
+  let transporter = createTransport({
     host: 'mail.privateemail.com',
     port: 465,
     secure: true,
@@ -16,4 +17,4 @@ const sendMail = async (mailInfo) => {
   return info;
 };
 
-module.exports = { sendMail };
+export default sendMail ;

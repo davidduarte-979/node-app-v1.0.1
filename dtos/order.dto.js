@@ -1,4 +1,4 @@
-const Joi = require('joi');
+import Joi from 'joi';
 
 const id = Joi.number().integer();
 const customerId = Joi.number().integer();
@@ -24,4 +24,4 @@ const addItemDto = Joi.object({
   amount: amount.required(),
 });
 
-module.exports = { createOrderDto, updateOrderDto, getOrderDto, addItemDto };
+export { createOrderDto, updateOrderDto, getOrderDto, addItemDto };

@@ -1,10 +1,10 @@
-const boom = require('@hapi/boom');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+import { unauthorized } from '@hapi/boom';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
-const { sendMail } = require('../util/mailsender/nodemailer');
-const { jwtSecretToken } = require('../config/config');
-const UserService = require('./user.service');
+import sendMail  from '../util/mailsender/nodemailer.js';
+import config from '../config/config.js';
+import UserService from './user.service.js';
 const service = new UserService();
 
 class AuthService {
@@ -15,7 +15,7 @@ class AuthService {
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!user || !isMatch) {
-      throw boom.unauthorized();
+      throw unauthorized();
     }
     delete user.dataValues.password;
     return user;
@@ -26,7 +26,7 @@ class AuthService {
       sub: user.id,
       role: user.role,
     };
-    const token = jwt.sign(payload, jwtSecretToken);
+    const token = jwt.sign(payload, config.jwtSecretToken);
     return {
       user,
       token,
@@ -36,13 +36,13 @@ class AuthService {
   async recoveryPassword(email) {
     const user = await service.findByEmail(email);
     if (!user) {
-      throw boom.unauthorized();
+      throw unauthorized();
     }
     const payload = {
       sub: user.id,
     };
-    const token = jwt.sign(payload, jwtSecretToken, { expiresIn: '15min' });
-    const link = `http/myfrontend/recovery?token=${token}`;
+    const token = jwt.sign(payload, config.jwtSecretToken, { expiresIn: '15min' });
+    const link = `${config.protocol}://${config.host}:${config.port}/reset/${token}`;
     await service.update(user.id, { recoveryToken: token });
     const emailInfo = {
       from: 'rebel-transport-gr75-api@rebel-transport-gr75.com',
@@ -56,18 +56,18 @@ class AuthService {
 
   async resetPassword(token, newPassword) {
     try {
-      const payload = jwt.verify(token, jwtSecretToken);
+      const payload = jwt.verify(token, config.jwtSecretToken);
       const user = await service.findOne(payload.sub);
       if (user.recoveryToken !== token) {
-        throw boom.unauthorized();
+        throw unauthorized();
       }
       const hash = await bcrypt.hash(newPassword, 10);
       await service.update(user.id, { recoveryToken: null, password: hash });
       return { message: 'Password changed' };
     } catch (error) {
-      throw boom.unauthorized(error);
+      throw unauthorized(error);
     }
   }
 }
 
-module.exports = AuthService;
+export default AuthService;

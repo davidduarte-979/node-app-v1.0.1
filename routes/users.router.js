@@ -1,14 +1,10 @@
-const express = require('express');
+import { Router } from 'express';
 
-const UserService = require('../services/user.service');
-const validatorMiddleware = require('../middleware/validator.middleware');
-const {
-  updateUserDto,
-  createUserDto,
-  getUserDto,
-} = require('../dtos/user.dto');
+import UserService from '../services/user.service.js';
+import validatorMiddleware from '../middleware/validator.middleware.js';
+import { updateUserDto, createUserDto, getUserDto } from '../dtos/user.dto.js';
 
-const router = express.Router();
+const router = Router();
 const service = new UserService();
 
 router.get('/', async (req, res, next) => {
@@ -78,4 +74,4 @@ router.delete(
   }
 );
 
-module.exports = router;
+export default router;

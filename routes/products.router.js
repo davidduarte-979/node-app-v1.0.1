@@ -1,13 +1,8 @@
-const express = require('express');
-const ProductsService = require('../services/product.service');
-const validatorMiddleware = require('../middleware/validator.middleware');
-const {
-  getProductDto,
-  createProductDto,
-  updateProductDto,
-  queryProductDto,
-} = require('../dtos/product.dto');
-const router = express.Router();
+import { Router } from 'express';
+import ProductsService from '../services/product.service.js';
+import validatorMiddleware from '../middleware/validator.middleware.js';
+import { getProductDto, createProductDto, updateProductDto, queryProductDto } from '../dtos/product.dto.js';
+const router = Router();
 const service = new ProductsService();
 
 router.get(
@@ -87,4 +82,4 @@ router.delete(
   }
 );
 
-module.exports = router;
+export default router;

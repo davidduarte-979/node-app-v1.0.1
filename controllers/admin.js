@@ -1,10 +1,10 @@
-const mongoose = require('mongoose');
-const fileHelper = require('../util/file');
-const { validationResult } = require('express-validator/check');
+import { deleteFile } from '../util/file.js';
+import expressValidator from 'express-validator/check/index.js';
 
-const Product = require('../models/product');
 
-exports.getAddProduct = (req, res, next) => {
+import Product from '../models/product.js';
+
+export function getAddProduct(req, res, next) {
   res.render('admin/edit-product', {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
@@ -13,9 +13,9 @@ exports.getAddProduct = (req, res, next) => {
     errorMessage: null,
     validationErrors: [],
   });
-};
+}
 
-exports.postAddProduct = (req, res, next) => {
+export function postAddProduct(req, res, next) {
   const title = req.body.title;
   const image = req.file;
   const price = req.body.price;
@@ -35,7 +35,7 @@ exports.postAddProduct = (req, res, next) => {
       validationErrors: [],
     });
   }
-  const errors = validationResult(req);
+  const errors = expressValidator.validationResult(req);
 
   if (!errors.isEmpty()) {
     console.log(errors.array());
@@ -92,9 +92,9 @@ exports.postAddProduct = (req, res, next) => {
       error.httpStatusCode = 500;
       return next(error);
     });
-};
+}
 
-exports.getEditProduct = (req, res, next) => {
+export function getEditProduct(req, res, next) {
   const editMode = req.query.edit;
   if (!editMode) {
     return res.redirect('/');
@@ -120,16 +120,16 @@ exports.getEditProduct = (req, res, next) => {
       error.httpStatusCode = 500;
       return next(error);
     });
-};
+}
 
-exports.postEditProduct = (req, res, next) => {
+export function postEditProduct(req, res, next) {
   const prodId = req.body.productId;
   const updatedTitle = req.body.title;
   const updatedPrice = req.body.price;
   const image = req.file;
   const updatedDesc = req.body.description;
 
-  const errors = validationResult(req);
+  const errors = expressValidator.validationResult(req);
 
   if (!errors.isEmpty()) {
     return res.status(422).render('admin/edit-product', {
@@ -157,7 +157,7 @@ exports.postEditProduct = (req, res, next) => {
       product.price = updatedPrice;
       product.description = updatedDesc;
       if (image) {
-        fileHelper.deleteFile(product.imageUrl);
+        deleteFile(product.imageUrl);
         product.imageUrl = image.path;
       }
       return product.save().then(result => {
@@ -170,9 +170,9 @@ exports.postEditProduct = (req, res, next) => {
       error.httpStatusCode = 500;
       return next(error);
     });
-};
+}
 
-exports.getProducts = (req, res, next) => {
+export function getProducts(req, res, next) {
   Product.find({ userId: req.user._id })
     // .select('title price -_id')
     // .populate('userId', 'name')
@@ -189,17 +189,17 @@ exports.getProducts = (req, res, next) => {
       error.httpStatusCode = 500;
       return next(error);
     });
-};
+}
 
-exports.deleteProduct = (req, res, next) => {
+export function deleteProduct(req, res, next) {
   const prodId = req.params.productId;
   Product.findById(prodId)
     .then(product => {
       if (!product) {
         return next(new Error('Product not found'));
       }
-      fileHelper.deleteFile(product.imageUrl);
-      return Product.deleteOne({ _id: prodId, userId: req.user._id });
+      deleteFile(product.imageUrl);
+      return Product.remove({ _id: prodId, userId: req.user._id });
     })
     .then(() => {
       console.log('DESTROYED PRODUCT');
@@ -212,4 +212,4 @@ exports.deleteProduct = (req, res, next) => {
         message: 'Deleting product failing',
       });
     });
-};
+}

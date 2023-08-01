@@ -1,14 +1,10 @@
-const express = require('express');
-const passport = require('passport');
-const CategoryService = require('../services/category.service');
-const validatorMiddleware = require('../middleware/validator.middleware');
-const { checkRoles } = require('../middleware/auth.middleware');
-const {
-  getCategoryDto,
-  createCategoryDto,
-  updateCategoryDto,
-} = require('../dtos/category.dto');
-const router = express.Router();
+import { Router } from 'express';
+import passport from 'passport';
+import CategoryService from '../services/category.service.js';
+import validatorMiddleware from '../middleware/validator.middleware.js';
+import { checkRoles } from '../middleware/auth.middleware.js';
+import { getCategoryDto, createCategoryDto, updateCategoryDto } from '../dtos/category.dto.js';
+const router = Router();
 const service = new CategoryService();
 
 router.get('/', async (req, res, next) => {
@@ -86,4 +82,4 @@ router.delete(
   }
 );
 
-module.exports = router;
+export default router;

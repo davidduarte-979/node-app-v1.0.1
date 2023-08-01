@@ -1,4 +1,4 @@
-const Joi = require('joi');
+import Joi from 'joi';
 
 const id = Joi.number().integer();
 const categoryId = Joi.number().integer();
@@ -43,7 +43,7 @@ const queryProductDto = Joi.object({
   }),
 });
 
-module.exports = {
+export {
   createProductDto,
   updateProductDto,
   getProductDto,

@@ -1,5 +1,5 @@
-const csrf = require('csurf');
-const flash = require('connect-flash');
+import csrf from 'csurf';
+import flash from 'connect-flash';
 const csrfProtection = csrf();
 
 const csrfMiddleware = (app) => {
@@ -13,4 +13,4 @@ const csrfMiddleware = (app) => {
   });
 };
 
-module.exports = csrfMiddleware;
+export default csrfMiddleware;

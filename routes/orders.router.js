@@ -1,13 +1,8 @@
-const express = require('express');
-const OrdersService = require('../services/order.service');
-const validatorMiddleware = require('../middleware/validator.middleware');
-const {
-  getOrderDto,
-  createOrderDto,
-  updateOrderDto,
-  addItemDto,
-} = require('../dtos/order.dto');
-const router = express.Router();
+import { Router } from 'express';
+import OrdersService from '../services/order.service.js';
+import validatorMiddleware from '../middleware/validator.middleware.js';
+import { getOrderDto, createOrderDto, updateOrderDto, addItemDto } from '../dtos/order.dto.js';
+const router = Router();
 const service = new OrdersService();
 
 router.get('/', async (req, res, next) => {
@@ -99,4 +94,4 @@ router.post(
   }
 );
 
-module.exports = router;
+export default router;

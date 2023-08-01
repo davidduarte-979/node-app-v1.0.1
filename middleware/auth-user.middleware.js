@@ -1,4 +1,4 @@
-const User = require('../models/user');
+import User from '../models/user.js';
 
 const authUserMiddleware = (app) => {
   app.use((req, res, next) => {
@@ -19,4 +19,4 @@ const authUserMiddleware = (app) => {
   });
 };
 
-module.exports = authUserMiddleware;
+export default authUserMiddleware;

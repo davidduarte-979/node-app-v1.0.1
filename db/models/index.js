@@ -1,9 +1,9 @@
-const { userSchema, User } = require('./user.model');
-const { CustomerSchema, Customer } = require('./customer.model');
-const { ProductSchema, Product } = require('./product.model');
-const { CategorySchema, Category } = require('./categoy.model');
-const { OrderProductSchema, OrderProduct } = require('./order-product.model');
-const { OrderSchema, Order } = require('./order.model');
+import { userSchema, User } from './user.model.js';
+import { CustomerSchema, Customer } from './customer.model.js';
+import { ProductSchema, Product } from './product.model.js';
+import { CategorySchema, Category } from './categoy.model.js';
+import { OrderProductSchema, OrderProduct } from './order-product.model.js';
+import { OrderSchema, Order } from './order.model.js';
 
 const setupModels = (sequelize) => {
   User.init(userSchema, User.config(sequelize));
@@ -20,4 +20,4 @@ const setupModels = (sequelize) => {
   Order.associate(sequelize.models);
 };
 
-module.exports = setupModels;
+export default setupModels;

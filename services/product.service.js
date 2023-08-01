@@ -1,7 +1,9 @@
-const boom = require('@hapi/boom');
-const { Op } = require('sequelize');
-const { models } = require('../libs/sequelize');
+import { notFound } from '@hapi/boom';
+import sequelize from 'sequelize';
+import sequilizeLib from '../libs/sequelize.js';
 
+const { models } = sequilizeLib;
+const { Op } = sequelize;
 class ProductsService {
   constructor() {}
 
@@ -39,7 +41,7 @@ class ProductsService {
   async findOne(id) {
     const product = await models.Product.findByPk(id);
     if (!product) {
-      throw boom.notFound('Product not found');
+      throw notFound('Product not found');
     }
     return product;
   }
@@ -57,4 +59,4 @@ class ProductsService {
   }
 }
 
-module.exports = ProductsService;
+export default ProductsService;
