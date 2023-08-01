@@ -1,21 +1,13 @@
-import { randomBytes } from 'crypto';
-
 import bcrypt from 'bcryptjs';
-import { createTransport } from 'nodemailer';
-import sendgridTransport from 'nodemailer-sendgrid-transport';
+import { unauthorized } from '@hapi/boom';
 import expressValidator from 'express-validator/check/index.js';
+import jwt from 'jsonwebtoken';
+
+import sendMail from '../util/mailsender/nodemailer.js';
+import config from '../config/config.js';
 import User from '../models/user.js';
 
 const { validationResult } = expressValidator;
-
-const transporter = createTransport(
-  sendgridTransport({
-    auth: {
-      api_key:
-        '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',
-    },
-  })
-);
 
 export function getLogin(req, res) {
   let message = req.flash('error');
@@ -56,107 +48,98 @@ export function getSignup(req, res) {
   });
 }
 
-export function postLogin(req, res, next) {
-  const email = req.body.email;
-  const password = req.body.password;
+export async function postLogin(req, res, next) {
+  try {
+    const email = req.body.email;
+    const password = req.body.password;
+    const errors = validationResult(req);
 
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).render('auth/login', {
-      path: '/login',
-      pageTitle: 'Login',
-      errorMessage: errors.array()[0].msg,
-      oldInput: {
-        email: email,
-        password: password,
-      },
-      validationErrors: errors.array(),
+    if (!errors.isEmpty()) {
+      return res.status(422).render('auth/login', {
+        path: '/login',
+        pageTitle: 'Login',
+        errorMessage: errors.array()[0].msg,
+        oldInput: {
+          email: email,
+          password: password,
+        },
+        validationErrors: errors.array(),
+      });
+    }
+
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      return res.status(422).render('auth/login', {
+        path: '/login',
+        pageTitle: 'Login',
+        errorMessage: 'Invalid email or password.',
+        oldInput: {
+          email: email,
+          password: password,
+        },
+        validationErrors: [],
+      });
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(422).render('auth/login', {
+        path: '/login',
+        pageTitle: 'Login',
+        errorMessage: 'Invalid email or password.',
+        oldInput: {
+          email: email,
+          password: password,
+        },
+        validationErrors: [],
+      });
+    }
+    req.session.isLoggedIn = true;
+    req.session.user = user;
+    return req.session.save((err) => {
+      console.log(err);
+      res.redirect('/');
     });
+  } catch (err) {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
   }
-
-  User.findOne({ email: email })
-    .then((user) => {
-      if (!user) {
-        return res.status(422).render('auth/login', {
-          path: '/login',
-          pageTitle: 'Login',
-          errorMessage: 'Invalid email or password.',
-          oldInput: {
-            email: email,
-            password: password,
-          },
-          validationErrors: [],
-        });
-      }
-      bcrypt.compare(password, user.password)
-        .then((doMatch) => {
-          if (doMatch) {
-            req.session.isLoggedIn = true;
-            req.session.user = user;
-            return req.session.save((err) => {
-              console.log(err);
-              res.redirect('/');
-            });
-          }
-          return res.status(422).render('auth/login', {
-            path: '/login',
-            pageTitle: 'Login',
-            errorMessage: 'Invalid email or password.',
-            oldInput: {
-              email: email,
-              password: password,
-            },
-            validationErrors: [],
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-          res.redirect('/login');
-        });
-    })
-    .catch((err) => {
-      const error = new Error(err);
-      error.httpStatusCode = 500;
-      return next(error);
-    });
 }
 
-export function postSignup(req, res, next) {
-  const email = req.body.email;
-  const password = req.body.password;
+export async function postSignup(req, res, next) {
+  try {
+    const email = req.body.email;
+    const password = req.body.password;
+    const errors = validationResult(req);
 
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).render('auth/signup', {
-      path: '/signup',
-      pageTitle: 'Signup',
-      errorMessage: errors.array()[0].msg,
-      oldInput: {
-        email: email,
-        password: password,
-        confirmPassword: req.body.confirmPassword,
-      },
-      validationErrors: errors.array(),
-    });
-  }
-
-  bcrypt.hash(password, 12)
-    .then((hashedPassword) => {
-      const user = new User({
-        email: email,
-        password: hashedPassword,
-        cart: { items: [] },
+    if (!errors.isEmpty()) {
+      return res.status(422).render('auth/signup', {
+        path: '/signup',
+        pageTitle: 'Signup',
+        errorMessage: errors.array()[0].msg,
+        oldInput: {
+          email: email,
+          password: password,
+          confirmPassword: req.body.confirmPassword,
+        },
+        validationErrors: errors.array(),
       });
-      return user.save();
-    })
-    .then(() => {
-      res.redirect('/login');
-    })
-    .catch((err) => {
-      const error = new Error(err);
-      error.httpStatusCode = 500;
-      return next(error);
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+    const user = new User({
+      email: email,
+      password: hashedPassword,
+      cart: { items: [] },
     });
+    await user.save();
+    return res.redirect('/login');
+
+  } catch (err) {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
+  }
 }
 
 export function postLogout(req, res) {
@@ -180,65 +163,66 @@ export function getReset(req, res) {
   });
 }
 
-export function postReset(req, res, next) {
-  randomBytes(32, (err, buffer) => {
-    if (err) {
+export async function postReset(req, res, next) {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      req.flash('error', 'No account with that email found.');
       return res.redirect('/reset');
     }
-    const token = buffer.toString('hex');
-    User.findOne({ email: req.body.email })
-      .then((user) => {
-        if (!user) {
-          req.flash('error', 'No account with that email found.');
-          return res.redirect('/reset');
-        }
-        user.resetToken = token;
-        user.resetTokenExpiration = Date.now() + 3600000;
-        return user.save();
-      })
-      .then(() => {
-        res.redirect('/');
-        transporter.sendMail({
-          to: req.body.email,
-          from: 'shop@node-complete.com',
-          subject: 'Password reset',
-          html: `
-            <p>You requested a password reset</p>
-            <p>Click this <a href="http://localhost:3000/reset/${token}">link</a> to set a new password.</p>
+    const payload = {
+      sub: user.id,
+    };
+    const token = jwt.sign(payload, config.jwtSecretToken, {
+      expiresIn: '15min',
+    });
+    user.resetToken = token;
+    const link = `${config.protocol}://${config.host}:${config.port}/reset/${token}`;
+    await user.save();
+    await sendMail({
+      to: req.body.email,
+      from: 'rebel-transport-gr75-api@rebel-transport-gr75.com',
+      subject: 'Password reset',
+      html: `
+          <p>You requested a password reset</p>
+          <p>Click this <a href="${link}">link</a> to set a new password.</p>
           `,
-        });
-      })
-      .catch((err) => {
-        const error = new Error(err);
-        error.httpStatusCode = 500;
-        return next(error);
-      });
-  });
+    });
+    return res.redirect('/');
+  } catch (err) {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
+  }
 }
 
-export function getNewPassword(req, res, next) {
-  const token = req.params.token;
-  User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } })
-    .then((user) => {
-      let message = req.flash('error');
-      if (message.length > 0) {
-        message = message[0];
-      } else {
-        message = null;
-      }
-      res.render('auth/new-password', {
-        path: '/new-password',
-        pageTitle: 'New Password',
-        errorMessage: message,
-        userId: user._id.toString(),
-        passwordToken: token,
-      });
-    })
-    .catch((err) => {
-      const error = new Error(err);
-      error.httpStatusCode = 500;
-      return next(error);
+export async function getNewPassword(req, res, next) {
+  try {
+    const token = req.params.token;
+    const user = await User.findOne({
+      resetToken: token,
     });
+    if (!user) {
+      throw unauthorized();
+    }
+    let message = req.flash('error');
+    if (message.length > 0) {
+      message = message[0];
+    } else {
+      message = null;
+    }
+    return res.render('auth/new-password', {
+      path: '/new-password',
+      pageTitle: 'New Password',
+      errorMessage: message,
+      userId: user._id.toString(),
+      passwordToken: token,
+    });
+  } catch (err) {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
+  }
 }
 
 export function postNewPassword(req, res, next) {
@@ -249,7 +233,6 @@ export function postNewPassword(req, res, next) {
 
   User.findOne({
     resetToken: passwordToken,
-    resetTokenExpiration: { $gt: Date.now() },
     _id: userId,
   })
     .then((user) => {

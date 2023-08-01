@@ -1,5 +1,4 @@
 import express from 'express';
-const app = express();
 import config from './config/config.js';
 
 import imageMiddleware from './middleware/image.middleware.js';
@@ -11,6 +10,9 @@ import errorMiddleware from './middleware/error.middleware.js';
 
 import routerApi from './routes/index.js';
 import getMongoDbConnection from './libs/mongoose.js';
+
+// Init server
+const app = express();
 
 // auth and session middlerwares
 import './util/auth/index.js';
