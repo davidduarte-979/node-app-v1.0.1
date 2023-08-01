@@ -3,40 +3,34 @@ import Order from '../models/order.js';
 import { createWriteStream } from 'fs';
 import { join } from 'path';
 import PDFDocument from 'pdfkit';
-import stripeLib from 'stripe'; 
+import stripeLib from 'stripe';
 const stripe = stripeLib(process.env.STRIPE_KEY);
 const ITEMS_PER_PAGE = 1;
 
-export function getProducts(req, res, next) {
-  const page = +req.query.page || 1;
-  let totalItems;
+export async function getProducts(req, res, next) {
+  try {
+    const page = +req.query.page || 1;
+    const totalItems = await Product.find().countDocuments();
+    const products = await Product.find()
+      .skip((page - 1) * ITEMS_PER_PAGE)
+      .limit(ITEMS_PER_PAGE);
 
-  Product.find()
-    .countDocuments()
-    .then((numProducts) => {
-      totalItems = numProducts;
-      return Product.find()
-        .skip((page - 1) * ITEMS_PER_PAGE)
-        .limit(ITEMS_PER_PAGE);
-    })
-    .then((products) => {
-      res.render('shop/product-list', {
-        prods: products,
-        pageTitle: 'Products',
-        path: '/products',
-        currentPage: page,
-        hasNextPage: ITEMS_PER_PAGE * page < totalItems,
-        hasPreviousPage: page > 1,
-        nextPage: page + 1,
-        previousPage: page - 1,
-        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
-      });
-    })
-    .catch((err) => {
-      const error = new Error(err);
-      error.httpStatusCode = 500;
-      return next(error);
+    res.render('shop/product-list', {
+      prods: products,
+      pageTitle: 'Products',
+      path: '/products',
+      currentPage: page,
+      hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+      hasPreviousPage: page > 1,
+      nextPage: page + 1,
+      previousPage: page - 1,
+      lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE),
     });
+  } catch (err) {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
+  }
 }
 
 export function getProduct(req, res, next) {
