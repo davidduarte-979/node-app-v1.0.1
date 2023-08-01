@@ -177,7 +177,7 @@ export async function postReset(req, res, next) {
       expiresIn: '15min',
     });
     user.resetToken = token;
-    const link = `${config.protocol}://${config.host}:${config.port}/reset/${token}`;
+    const link = `${config.host}/reset/${token}`;
     await user.save();
     await sendMail({
       to: req.body.email,
