@@ -28,6 +28,12 @@ const userSchema = {
     type: DataTypes.STRING,
     defaultValue: 'customer',
   },
+  displayName: {
+    type: DataTypes.VIRTUAL,
+    get() {
+      return `${this.firstname} ${this.lastname}`
+    },
+  },
   createdAt: {
     allowNull: false,
     type: DataTypes.DATE,
