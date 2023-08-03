@@ -14,6 +14,14 @@ const userSchema = {
     type: DataTypes.STRING,
     unique: true,
   },
+  firstname: {
+    allowNull: true,
+    type: DataTypes.STRING
+  },
+  lastname: {
+    allowNull: true,
+    type: DataTypes.STRING
+  },
   password: {
     allowNull: false,
     type: DataTypes.STRING,
