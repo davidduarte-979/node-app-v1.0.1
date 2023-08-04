@@ -12,10 +12,14 @@ class AuthService {
 
   async getUser(email, password) {
     const user = await service.findByEmail(email);
+
+    if (!user) {
+      throw unauthorized('Password or email are incorrect');
+    }
     const isMatch = await bcrypt.compare(password, user.password);
 
-    if (!user || !isMatch) {
-      throw unauthorized();
+    if (!isMatch) {
+      throw unauthorized('Password or email are incorrect');
     }
     delete user.dataValues.password;
     return user;
