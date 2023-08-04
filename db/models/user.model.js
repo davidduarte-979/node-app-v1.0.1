@@ -36,6 +36,11 @@ const userSchema = {
     type: DataTypes.STRING,
     defaultValue: 'customer',
   },
+  isEmailVerify: {
+    field: 'is_email_verify',
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
   displayName: {
     type: DataTypes.VIRTUAL,
     get() {
