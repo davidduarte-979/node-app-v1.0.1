@@ -61,6 +61,11 @@ class AuthService {
     return info;
   }
 
+  async isEmailAvailable(email) {
+    const user = await service.findByEmail(email);
+    return { isAvailable: !!user }
+  }
+
   async resetPassword(token, newPassword) {
     try {
       const payload = jwt.verify(token, config.jwtSecretToken);
