@@ -63,7 +63,7 @@ class AuthService {
 
   async isEmailAvailable(email) {
     const user = await service.findByEmail(email);
-    return { isAvailable: !!user }
+    return { isAvailable: !user }
   }
 
   async resetPassword(token, newPassword) {
