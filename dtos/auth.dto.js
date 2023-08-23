@@ -2,7 +2,7 @@ import Joi from 'joi';
 
 const email = Joi.string().email();
 const password = Joi.string().min(8);
-const token = Joi.string().alphanum().min(3).max(200);
+const token = Joi.string();
 
 
 const isAvailableEmailDto = Joi.object({

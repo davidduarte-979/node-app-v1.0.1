@@ -40,7 +40,7 @@ class AuthService {
     };
   }
 
-  async recoveryPassword(email) {
+  async recoveryPassword(email, origin) {
     const user = await service.findByEmail(email);
     if (!user) {
       throw unauthorized();
@@ -48,8 +48,8 @@ class AuthService {
     const payload = {
       sub: user.id,
     };
-    const token = jwt.sign(payload, config.jwtSecretToken, { expiresIn: '15min' });
-    const link = `${config.protocol}://${config.host}:${config.port}/reset/${token}`;
+    const token = jwt.sign(payload, config.jwtSecretToken, { expiresIn: '5min' });
+    const link = `${origin}/auth/forgot-password?token=${token}`;
     await service.update(user.id, { recoveryToken: token });
     const emailInfo = {
       from: 'rebel-transport-gr75-api@rebel-transport-gr75.com',

@@ -38,7 +38,8 @@ router.post(
 router.post('/recovery', validatorMiddleware(isAvailableEmailDto, 'body'), async (req, res, next) => {
   try {
     const { email } = req.body;
-    const rta = await service.recoveryPassword(email);
+    const origin = req.get('origin');
+    const rta = await service.recoveryPassword(email, origin);
     res.status(201).json({ rta, message: 'Email sent' });
   } catch (error) {
     next(error);
@@ -47,8 +48,8 @@ router.post('/recovery', validatorMiddleware(isAvailableEmailDto, 'body'), async
 
 router.post('/reset-password', validatorMiddleware(recoveryPasswordDto, 'body'), async (req, res, next) => {
   try {
-    const { token, newPassword } = req.body;
-    const rta = await service.resetPassword(token, newPassword);
+    const { token, password } = req.body;
+    const rta = await service.resetPassword(token, password);
     res.status(201).json({ rta });
   } catch (error) {
     next(error);
