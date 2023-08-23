@@ -49,7 +49,7 @@ router.post('/reset-password', validatorMiddleware(recoveryPasswordDto, 'body'),
   try {
     const { token, newPassword } = req.body;
     const rta = await service.resetPassword(token, newPassword);
-    res.status(201).json({ rta, message: 'Email sent' });
+    res.status(201).json({ rta });
   } catch (error) {
     next(error);
   }
