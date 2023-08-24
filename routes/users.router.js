@@ -1,8 +1,8 @@
 import { Router } from 'express';
-
 import UserService from '../services/user.service.js';
 import validatorMiddleware from '../middleware/validator.middleware.js';
 import { updateUserDto, createUserDto, getUserDto } from '../dtos/user.dto.js';
+import { checkAdminRole } from '../middleware/auth.middleware.js';
 
 const router = Router();
 const service = new UserService();
@@ -32,6 +32,7 @@ router.get(
 
 router.post(
   '/',
+  checkAdminRole,
   validatorMiddleware(createUserDto, 'body'),
   async (req, res, next) => {
     try {
@@ -46,6 +47,7 @@ router.post(
 
 router.patch(
   '/:id',
+  checkAdminRole,
   validatorMiddleware(getUserDto, 'params'),
   validatorMiddleware(updateUserDto, 'body'),
   async (req, res, next) => {
@@ -62,6 +64,7 @@ router.patch(
 
 router.delete(
   '/:id',
+  checkAdminRole,
   validatorMiddleware(getUserDto, 'params'),
   async (req, res, next) => {
     try {
