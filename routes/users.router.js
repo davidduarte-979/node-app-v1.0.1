@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import passport from 'passport';
 import UserService from '../services/user.service.js';
 import validatorMiddleware from '../middleware/validator.middleware.js';
 import { updateUserDto, createUserDto, getUserDto } from '../dtos/user.dto.js';
@@ -7,7 +8,7 @@ import { checkAdminRole } from '../middleware/auth.middleware.js';
 const router = Router();
 const service = new UserService();
 
-router.get('/', async (req, res, next) => {
+router.get('/', passport.authenticate('jwt', { session: false }), async (req, res, next) => {
   try {
     const users = await service.find();
     res.json(users);
@@ -18,6 +19,7 @@ router.get('/', async (req, res, next) => {
 
 router.get(
   '/:id',
+  passport.authenticate('jwt', { session: false }),
   validatorMiddleware(getUserDto, 'params'),
   async (req, res, next) => {
     try {
@@ -32,7 +34,6 @@ router.get(
 
 router.post(
   '/',
-  checkAdminRole,
   validatorMiddleware(createUserDto, 'body'),
   async (req, res, next) => {
     try {
@@ -47,7 +48,7 @@ router.post(
 
 router.patch(
   '/:id',
-  checkAdminRole,
+  passport.authenticate('jwt', { session: false }),
   validatorMiddleware(getUserDto, 'params'),
   validatorMiddleware(updateUserDto, 'body'),
   async (req, res, next) => {
@@ -64,6 +65,7 @@ router.patch(
 
 router.delete(
   '/:id',
+  passport.authenticate('jwt', { session: false }),
   checkAdminRole,
   validatorMiddleware(getUserDto, 'params'),
   async (req, res, next) => {

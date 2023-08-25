@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import passport from 'passport';
 import productsRouter from './products.router.js';
 import customersRouter from './customer.router.js';
 import categoriesRouter from './categories.router.js';
@@ -15,7 +14,7 @@ const routerApi = (app) => {
   const router = Router();
   app.use('/api/v1', router);
   router.use('/products', productsRouter);
-  router.use('/users', passport.authenticate('jwt', { session: false }), usersRouter);
+  router.use('/users', usersRouter);
   router.use('/customers', customersRouter);
   router.use('/categories', categoriesRouter);
   router.use('/orders', ordersRouter);
