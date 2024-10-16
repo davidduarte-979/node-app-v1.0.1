@@ -3,15 +3,15 @@ import { static as staticExpress } from 'express';
 import { fileURLToPath } from 'url';
 import { join, dirname } from 'path';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 const imageMiddleware = (app) => {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
   const storage = diskStorage({
     destination: (req, file, cb) => {
       cb(null, 'images');
     },
     filename: (req, file, cb) => {
-      cb(null, new Date().toISOString() + '-' + file.originalname);
+      cb(null, new Date().getTime() + '-' + file.originalname);
     },
   });
 
