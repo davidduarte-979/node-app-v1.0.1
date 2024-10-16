@@ -1,7 +1,7 @@
-'use strict';
-const { DataTypes, Sequelize } = require('sequelize');
-const { ORDER_TABLE } = require('../../db/models/order.model');
-const { CUSTOMER_TABLE } = require('../models/customer.model');
+"use strict";
+const { DataTypes, Sequelize } = require("sequelize");
+const ORDER_TABLE = "orders";
+const CUSTOMER_TABLE = "customers";
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -14,25 +14,24 @@ module.exports = {
         type: DataTypes.INTEGER,
       },
       customerId: {
-        field: 'customer_id',
+        field: "customer_id",
         allowNull: false,
         type: DataTypes.INTEGER,
         References: {
           model: CUSTOMER_TABLE,
-          key: 'id',
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL",
       },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,
-        field: 'created_at',
+        field: "created_at",
         defaultValue: Sequelize.NOW,
       },
     });
   },
-
   async down(queryInterface) {
     await queryInterface.dropTable(ORDER_TABLE);
   },
