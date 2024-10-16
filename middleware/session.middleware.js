@@ -1,5 +1,4 @@
 import helmet from 'helmet';
-import cors from 'cors';
 import session from 'express-session';
 import connectMongodbSession from 'connect-mongodb-session';
 const MongoDBStore = connectMongodbSession(session);
@@ -10,7 +9,6 @@ const store = new MongoDBStore({
 });
 
 const sessionMiddleware = (app) => {
-  app.use(cors());
   app.use(helmet());
   app.use(
     session({
