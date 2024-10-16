@@ -12,10 +12,16 @@ import errorMiddleware from './middleware/error.middleware.js';
 import routerApi from './routes/index.js';
 import getMongoDbConnection from './libs/mongoose.js';
 
-const allowlist = ['https://www.davidduarte.dev', 'http://localhost:4200'];
+const allowlist = [
+  'https://www.davidduarte.dev',
+  'http://localhost:4200',
+  'http://www.davidduarte.dev',
+];
 const corsOptionsDelegate = function (req, callback) {
   let corsOptions;
-  if (allowlist.indexOf(req.header('Origin')) !== -1) {
+  console.log(req.header('Origin'));
+
+  if (allowlist.indexOf(req.header('Origin')) === -1) {
     corsOptions = { origin: true }; // reflect (enable) the requested origin in the CORS response
   } else {
     corsOptions = { origin: false }; // disable CORS for this request
