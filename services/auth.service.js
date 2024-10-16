@@ -2,7 +2,7 @@ import { unauthorized } from '@hapi/boom';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-import sendMail  from '../util/mailsender/nodemailer.js';
+import sendMail from '../util/mailsender/nodemailer.js';
 import config from '../config/config.js';
 import UserService from './user.service.js';
 const service = new UserService();
@@ -30,7 +30,7 @@ class AuthService {
       sub: user.id,
       role: user.role,
     };
-    const token = jwt.sign(payload, config.jwtSecretToken);
+    const token = jwt.sign(payload, config.jwtSecretToken, { expiresIn: '1h' });
     return {
       id: user.id,
       displayName: user.displayName,
@@ -48,7 +48,9 @@ class AuthService {
     const payload = {
       sub: user.id,
     };
-    const token = jwt.sign(payload, config.jwtSecretToken, { expiresIn: '5min' });
+    const token = jwt.sign(payload, config.jwtSecretToken, {
+      expiresIn: '5min',
+    });
     const link = `${origin}/auth/forgot-password?token=${token}`;
     await service.update(user.id, { recoveryToken: token });
     const emailInfo = {
@@ -63,7 +65,7 @@ class AuthService {
 
   async isEmailAvailable(email) {
     const user = await service.findByEmail(email);
-    return { isAvailable: !user }
+    return { isAvailable: !user };
   }
 
   async resetPassword(token, newPassword) {

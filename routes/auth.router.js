@@ -23,6 +23,20 @@ router.post(
 );
 
 router.post(
+  '/logout',
+  validatorMiddleware(loginDto, 'body'),
+  passport.authenticate('local', { session: false }),
+  async (req, res, next) => {
+    try {
+      const user = req.user;
+      res.status(201).json(await service.signToken(user));
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+router.post(
   '/is-email-available',
   validatorMiddleware(isAvailableEmailDto, 'body'),
   async (req, res, next) => {
