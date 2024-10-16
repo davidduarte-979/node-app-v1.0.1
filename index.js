@@ -25,12 +25,13 @@ const corsOptionsDelegate = function (req, callback) {
 
 // Init server
 const app = express();
-app.use(cors(corsOptionsDelegate));
 // Add headers
 app.use(function (req, res, next) {
   // Website you wish to allow to connect
-  res.setHeader('Access-Control-Allow-Origin', 'https://www.davidduarte.dev');
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
+  res.setHeader('Access-Control-Allow-Origin', [
+    'https://www.davidduarte.dev',
+    'http://localhost:4200',
+  ]);
 
   // Request methods you wish to allow
   res.setHeader(
@@ -51,6 +52,7 @@ app.use(function (req, res, next) {
   // Pass to next layer of middleware
   next();
 });
+app.use(cors(corsOptionsDelegate));
 
 // auth and session middlerwares
 import './util/auth/index.js';
