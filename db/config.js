@@ -1,16 +1,26 @@
-import config from '../config/config.js'
+import config from '../config/config.js';
 
-const USER = encodeURIComponent(config.dbUser);
-const PASSWORD = encodeURIComponent(config.dbPassword);
-const URI = `postgres://${USER}:${PASSWORD}@${config.dbHost}:${config.dbPort}/${config.dbName}`;
+const URI = config.postgresUri;
 
 export default {
   development: {
     url: URI,
     dialect: 'postgres',
+    dialectOptions: {
+      ssl: {
+        require: false,
+        rejectUnauthorized: false,
+      },
+    },
   },
   production: {
     url: URI,
     dialect: 'postgres',
+    dialectOptions: {
+      ssl: {
+        require: false,
+        rejectUnauthorized: false,
+      },
+    },
   },
 };

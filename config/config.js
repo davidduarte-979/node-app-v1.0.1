@@ -15,6 +15,7 @@ const config = {
   jwtSecretToken: process.env.JWT_SECRET_TOKEN,
   emailUser: process.env.EMAIL_USER,
   emailPassword: process.env.EMAIL_PASSWORD,
+  postgresUri: process.env.DB_POSTGRES_URI,
 };
 
 export default config;
