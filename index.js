@@ -13,7 +13,14 @@ import routerApi from './routes/index.js';
 import getMongoDbConnection from './libs/mongoose.js';
 // Init server
 const app = express();
-app.use(cors());
+
+app.use(
+  cors({
+    origin: 'http://www.davidduarte.dev',
+    headers: ['Content-Type'],
+    credentials: true,
+  })
+);
 
 // auth and session middlerwares
 import './util/auth/index.js';
