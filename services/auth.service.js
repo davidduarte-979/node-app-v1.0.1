@@ -32,11 +32,11 @@ class AuthService {
     };
     const token = jwt.sign(payload, config.jwtSecretToken, { expiresIn: '1h' });
     return {
-      id: user.id,
       displayName: user.displayName,
       email: user.email,
       isEmailverify: user.isEmailVerify,
       token,
+      role: user.role,
     };
   }
 
