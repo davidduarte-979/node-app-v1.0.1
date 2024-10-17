@@ -14,6 +14,7 @@ import getMongoDbConnection from './libs/mongoose.js';
 // Init server
 const app = express();
 
+app.options('*', cors());
 app.use(
   cors({
     origin: '*',
@@ -22,7 +23,6 @@ app.use(
     credentials: true,
   })
 );
-app.options('*', cors());
 
 app.use(function (req, res, next) {
   // res.header("Access-Control-Allow-Origin", "*");
