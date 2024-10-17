@@ -11,41 +11,9 @@ import errorMiddleware from './middleware/error.middleware.js';
 
 import routerApi from './routes/index.js';
 import getMongoDbConnection from './libs/mongoose.js';
-
-const allowlist = [
-  'https://www.davidduarte.dev',
-  'http://localhost:4200',
-  'http://www.davidduarte.dev',
-];
-const corsOptionsDelegate = function (req, callback) {
-  let corsOptions;
-  console.log(req.header('Origin'));
-
-  if (allowlist.indexOf(req.header('Origin')) !== -1) {
-    corsOptions = { origin: false }; // reflect (enable) the requested origin in the CORS response
-  } else {
-    corsOptions = { origin: false }; // disable CORS for this request
-  }
-  callback(null, corsOptions); // callback expects two parameters: error and options
-};
-
 // Init server
 const app = express();
-// Add headers
-app.use(function (req, res, next) {
-  // Website you wish to allow to connect
-  res.setHeader('Access-Control-Allow-Origin', '*');
-
-  // Request methods you wish to allow
-  res.setHeader('Access-Control-Allow-Methods', '*');
-
-  // Request headers you wish to allow
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  // Pass to next layer of middleware
-  next();
-});
-app.use(cors(corsOptionsDelegate));
+app.use(cors());
 
 // auth and session middlerwares
 import './util/auth/index.js';
