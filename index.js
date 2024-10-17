@@ -21,6 +21,7 @@ app.use(
     credentials: false,
   })
 );
+app.options('*', cors());
 
 // auth and session middlerwares
 import './util/auth/index.js';
