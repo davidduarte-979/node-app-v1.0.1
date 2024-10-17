@@ -18,7 +18,7 @@ app.use(
   cors({
     origin: 'http://www.davidduarte.dev',
     headers: ['Content-Type'],
-    credentials: true,
+    credentials: false,
   })
 );
 
