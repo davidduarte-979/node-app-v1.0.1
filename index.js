@@ -25,7 +25,6 @@ app.use(
 );
 
 app.use(function (req, res, next) {
-  // res.header("Access-Control-Allow-Origin", "*");
   const allowedOrigins = [
     'http://localhost:4200',
     'https://www.davidduarte.dev',
